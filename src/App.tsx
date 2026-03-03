@@ -161,6 +161,7 @@ export default function App() {
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('');
+  const [showDemoVideo, setShowDemoVideo] = useState(false);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [isDownloadingWord, setIsDownloadingWord] = useState(false);
   const [darkMode, setDarkMode] = useState(() => {
@@ -721,6 +722,34 @@ export default function App() {
   return (
     <div className={`min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans transition-colors ${darkMode ? 'dark' : ''}`}>
       <LoadingOverlay message={loadingMessage} isVisible={loading || isOptimizing} />
+
+      <AnimatePresence>
+        {showDemoVideo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+          >
+            <div className="relative w-full max-w-4xl bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10">
+              <button
+                onClick={() => setShowDemoVideo(false)}
+                className="absolute top-4 right-4 z-[110] p-2 bg-black/50 hover:bg-black/80 rounded-full text-white transition-colors backdrop-blur-md"
+                aria-label="Close demo video"
+              >
+                <X size={20} />
+              </button>
+              <video
+                src="/demo.mp4"
+                controls
+                autoPlay
+                className="w-full h-auto max-h-[85vh] object-contain relative z-[105]"
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-4 px-6 sticky top-0 z-10 transition-colors">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
@@ -820,11 +849,14 @@ export default function App() {
                         </div>
 
                         <button
-                          onClick={useMockLinkedin}
+                          onClick={() => {
+                            useMockLinkedin();
+                            setShowDemoVideo(true);
+                          }}
                           className={`flex items-center justify-center space-x-2 w-full py-3 px-4 rounded-xl font-medium transition-all border ${linkedinData ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
                         >
                           {linkedinData ? <CheckCircle2 size={18} /> : null}
-                          <span>{linkedinData ? 'Demo Data Active' : 'Use Demo Data'}</span>
+                          <span>{linkedinData ? 'Demo Data Active' : 'Demo Video'}</span>
                         </button>
                       </div>
                     </div>
